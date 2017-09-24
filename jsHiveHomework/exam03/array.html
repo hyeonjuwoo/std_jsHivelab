@@ -1,0 +1,222 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>exam</title>
+<link rel="stylesheet" href="common.css" />
+<script src="https://code.jquery.com/jquery-latest.js"></script>
+<script type="text/javascript">
+	$(function() {
+		// exam1 [s]
+		var exam1 = $('.exam_wrap').eq(0),
+				elBtn1 = exam1.find('button'),
+				aMyName = ['Woo', 'Hyeon', 'Ju'],
+				sMyName = '';
+
+		elBtn1.on("click", function() {
+			sMyName = aMyName[0] + ' ' + aMyName[1] + aMyName[2];
+			console.log(sMyName);
+		});
+		// exam1 [e]
+
+		// exam2 [s]
+		var exam2 = $('.exam_wrap').eq(1),
+				elBtn2 = exam2.find('button'),
+				sBase2 = 'question',
+				aBase2 = sBase2.split(''),
+				nBase2Length = aBase2.length,
+				nIndex2 = 0,
+				sResult2 = '';
+
+		elBtn2.on("click", function() {
+			sResult2 = '';
+			for (var i = 0; i < nBase2Length; i++) {
+				nIndex2 = (nBase2Length-1) - i
+				sResult2 += aBase2[nIndex2]
+			}
+			console.log(sResult2);
+		});
+		// exam2 [e]
+
+		// exam3 [s]
+		var exam3 = $('.exam_wrap').eq(2),
+				elBtn3 = exam3.find('button'),
+				aBase3 = [40, 100, 1, 5, 25, 10],
+				nBase3Length = aBase3.length,
+				aResult3 = [];
+
+		var compare = function(value1, value2) {
+				return value2 - value1;
+		},
+		aBase3Sort = aBase3.slice().sort(compare);
+
+
+		elBtn3.on("click", function() {
+			aResult3 = [];
+			for (var i = 0; i < nBase3Length; i++) {
+				for (var j = 0; j < nBase3Length; j++) {
+					if (aBase3Sort[i] === aBase3[j]) {
+						aResult3.push(j);
+					}
+				}
+			}
+
+			console.log(aResult3);
+		});
+		// exam3 [e]
+
+		// exam4 [s]
+		var exam4 = $('.exam_wrap').eq(3),
+				elBtn4 = exam4.find('button'),
+				aTable4 = [],
+				aResult4 = [];
+
+		elBtn4.on("click", function() {
+			aResult4 = [];
+			for (var i = 2; i <= 9; i++) {
+				for (var j = 1; j <= 9; j++) {
+					aTable4.push(i*j);
+				}
+				aResult4.push(aTable4);
+				aTable4 = [];
+			}
+
+			console.log(aResult4);
+		});
+		// exam4 [e]
+
+		// exam5 [s]
+		var exam5 = $('.exam_wrap').eq(4),
+				elBtn5 = exam5.find('button'),
+				aResult5 = [];
+
+		elBtn5.on("click", function() {
+			aResult5 = [];
+			for (var i = 0; i < 10; i++) {
+				aResult5.push(i);
+			}
+
+			console.log(aResult5);
+		});
+		// exam5 [e]
+
+		// exam6 [s]
+		var exam6 = $('.exam_wrap').eq(5),
+				elBtn6 = exam6.find('button'),
+				aResult6 = [];
+
+		elBtn6.on("click", function() {
+			aResult6 = [];
+			for (var i = 0; i < 6; i++) {
+				nRandom = Math.floor( Math.random() * 6);
+				aResult6.push(nRandom);
+			}
+
+			console.log(aResult6);
+		});
+		// exam6 [e]
+
+		// exam7 [s]
+		var exam7 = $('.exam_wrap').eq(6),
+				elBtn7 = exam7.find('button'),
+				aBase7 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+				nBase7Length = 0,
+				nRandom = 0,
+				aResult7 = [];
+
+		elBtn7.on("click", function() {
+			nBase7Length = aBase7.length;
+			nRandom = Math.floor( Math.random() * (nBase7Length) );
+			aBase7.splice(nRandom, 1);
+
+			console.log(aBase7);
+		});
+		// exam7 [e]
+
+		// exam8 [s]
+		var exam8 = $('.exam_wrap').eq(7),
+				elBtn8 = exam8.find('button'),
+				aBase8 = [],
+				aRandom= [],
+				aResult8 = [],
+				aResult8Length = 0;
+
+		elBtn8.on("click", function() {
+			aResult8 = [];
+			aBase8 = [0, 1, 2, 3, 4, 5];
+			for (var i = 0; i < 6; i++) {
+				nBase8Length = aBase8.length;
+				nRandom = Math.floor( Math.random() * (nBase8Length) );
+				aRandom = aBase8.splice(nRandom, 1);
+				aResult8 = aResult8.concat(aRandom);
+			}
+
+			console.log(aResult8);
+		});
+		// exam8 [e]
+
+	})
+</script>
+</head>
+<body>
+<!-- wrapper [s] -->
+<div id="wrapper">
+	<!-- header [s] -->
+	<div id="header">
+	</div>
+	<!-- header [e] -->
+	<hr />
+	<!-- container [s] -->
+	<div id="container">
+		<div class="exam_wrap">
+			<h1>Q. 배열에 본인 이름을 한글자씩 담은 다음 문자열로 출력하세요.</h1>
+			<div class="exam_q">예시) ['Lee', 'Hwan'] => 'Lee Hwan'</div>
+			<button type="button">버튼</button>
+		</div>
+		<div class="exam_wrap">
+			<h1>Q. 'question' 문자열을 거꾸로 출력하세요. (for문 사용)</h1>
+			<div class="exam_q">예시) 'question' => 'noitseuq'</div>
+			<button type="button">버튼</button>
+		</div>
+		<div class="exam_wrap">
+			<h1>Q. [40, 100, 1, 5, 25, 10] 에서 가장 큰 수 순서대로 index 를 배열로 출력하세요.  (for/if문 사용)</h1>
+			<div class="exam_q">예시) [40, 100, 1, 5, 25, 10] => [1, 0, 4, 5, 3, 2]</div>
+			<button type="button">버튼</button>
+		</div>
+		<div class="exam_wrap">
+			<h1>Q. 2중 배열로 구구단을 만드세요. (for문 사용)</h1>
+			<div class="exam_q">예시) [[2,4,6...],[3,6,9...]...]</div>
+			<button type="button">버튼</button>
+		</div>
+		<div class="exam_wrap">
+			<h1>Q. 배열에 숫자 0 ~ 9까지 담아보세요. (for문 사용)</h1>
+			<div class="exam_q">예시) [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]</div>
+			<button type="button">버튼</button>
+		</div>
+		<div class="exam_wrap">
+			<h1>Q. 배열에 숫자 0 ~ 5 사이의 랜덤한 숫자를 6개 담아보세요. (for문 사용)</h1>
+			<div class="exam_q">예시) [4, 2, 3, 2, 3, 0]</div>
+			<button type="button">버튼</button>
+		</div>
+		<div class="exam_wrap">
+			<h1>Q. 배열에 숫자 0 ~ 9까지 담고, 버튼 클릭시 랜덤한 숫자를 하나씩 빼주세요.</h1>
+			<div class="exam_q">예시) [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] => [0, 1, 2, 3, 4, 5, 7, 8, 9] => [0, 1, 3, 4, 5, 7, 8, 9]</div>
+			<button type="button">버튼</button>
+		</div>
+		<div class="exam_wrap">
+			<h1>Q. 배열에 숫자 0 ~ 5 사이의 랜덤한 숫자를 중복되는 값이 없도록 6개 담아보세요. (for/if문 사용)</h1>
+			<div class="exam_q">예시) [4, 2, 3, 1, 5, 0]</div>
+			<button type="button">버튼</button>
+		</div>
+	</div>
+	<!-- container [e] -->
+	<hr />
+	<!-- footer [s] -->
+	<div id="footer">
+	</div>
+	<!-- footer [e] -->
+</div>
+<!-- wrapper [e] -->
+</body>
+</html>
