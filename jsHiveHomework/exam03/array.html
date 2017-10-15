@@ -29,6 +29,8 @@
 				nIndex2 = 0,
 				sResult2 = '';
 
+				//'question'.split('').reverse().join('')
+
 		elBtn2.on("click", function() {
 			sResult2 = '';
 			for (var i = 0; i < nBase2Length; i++) {
@@ -150,6 +152,8 @@
 				nRandom = Math.floor( Math.random() * (nBase8Length) );
 				aRandom = aBase8.splice(nRandom, 1);
 				aResult8 = aResult8.concat(aRandom);
+				//aResult8 = aResult8.push(aRandom);
+
 			}
 
 			console.log(aResult8);
