@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0">
+  <title>Line Play</title>
+  <link rel="stylesheet" type="text/css" href="css/common.css">
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+  <script>
+      var RandomAvata = function() {
+        this.init();
+      };
+
+      RandomAvata.prototype = {
+        init: function() {
+              this._assignElements();
+              this._initialize();
+              this._attachEventHandlers();
+        },
+        _assignElements: function() {
+              this.welBanner = $('.create_wrap')
+              this.welItems = this.welBanner.find('li');
+              this.welBtnRandom = this.welBanner.find('.btn_random');
+        },
+        _initialize: function() {
+              this.nItemsLength = this.welItems.length;
+              this.aIndex = [];
+              this.nCurrentIndex = 0;
+
+              this._createIndex();
+              this._showItem();
+        },
+        _attachEventHandlers: function() {
+          this.welBtnRandom.on('click', $.proxy(this._onClickBtnRandom, this));
+        },
+        _onClickBtnRandom: function() {
+          this._showItem();
+        },
+        _createIndex: function() {
+          for (var i = 0; i < this.nItemsLength; i++) {
+    				this.aIndex.push(i);
+          }
+        },
+        _createRandomNum: function() {
+          return Math.floor( Math.random() * (this.aIndex.length));
+        },
+        _showItem: function() {
+          var nRandom = this._createRandomNum();
+
+          // 인덱스가 새로 생성되었을 시, 현재 아바타 인덱스와 선택된 인덱스 겹치지 않도록 함
+          while (this.aIndex[nRandom] === this.nCurrentIndex) {
+            nRandom = this._createRandomNum();
+          }
+
+          // 선택된 인덱스의 아바타 외의 나머지 아바타들 숨김
+          this.welItems.eq(this.aIndex[nRandom]).show().siblings().hide();
+
+          // 선택된 인덱스를 현재인덱스로 저장
+          this.nCurrentIndex = this.aIndex[nRandom];
+
+          // 인덱스가 하나 남았을 때 인덱스 새로 생성 / 하나가 아닐 시, 인덱스배열에서 선택된 인덱스 제거
+          if (this.aIndex.length === 1) {
+            this.aIndex.splice(0);
+            this._createIndex();
+          } else {
+            this.aIndex.splice(nRandom, 1);
+          }
+        }
+      };
+
+      $(document).ready(function() {
+        var Random1 = new RandomAvata();
+      });
+  </script>
+</head>
+<body>
+  <div class="create_wrap">
+  <div class="swiper-container">
+    <ul class="swiper-wrapper">
+    <li class="swiper-slide">
+      <span class="avatar_box">
+        <img src="img/avatar_01.jpg" alt="avatar image" class="img_avatar">
+      </span>
+    </li>
+    <li class="swiper-slide">
+      <span class="avatar_box">
+        <img src="img/avatar_02.jpg" alt="avatar image" class="img_avatar">
+      </span>
+    </li>
+    <li class="swiper-slide">
+      <span class="avatar_box">
+        <img src="img/avatar_03.jpg" alt="avatar image" class="img_avatar">
+      </span>
+    </li>
+    <li class="swiper-slide">
+      <span class="avatar_box">
+        <img src="img/avatar_04.jpg" alt="avatar image" class="img_avatar">
+      </span>
+    </li>
+    <li class="swiper-slide">
+      <span class="avatar_box">
+        <img src="img/avatar_05.jpg" alt="avatar image" class="img_avatar">
+      </span>
+    </li>
+    <li class="swiper-slide">
+      <span class="avatar_box">
+        <img src="img/avatar_06.jpg" alt="avatar image" class="img_avatar">
+      </span>
+    </li>
+    <li class="swiper-slide">
+      <span class="avatar_box">
+        <img src="img/avatar_07.jpg" alt="avatar image" class="img_avatar">
+      </span>
+    </li>
+    <li class="swiper-slide">
+      <span class="avatar_box">
+        <img src="img/avatar_08.jpg" alt="avatar image" class="img_avatar">
+      </span>
+    </li>
+    <li class="swiper-slide">
+      <span class="avatar_box">
+        <img src="img/avatar_09.jpg" alt="avatar image" class="img_avatar">
+      </span>
+    </li>
+    <li class="swiper-slide">
+      <span class="avatar_box">
+        <img src="img/avatar_10.jpg" alt="avatar image" class="img_avatar">
+      </span>
+    </li>
+    <li class="swiper-slide">
+      <span class="avatar_box">
+        <img src="img/avatar_11.jpg" alt="avatar image" class="img_avatar">
+      </span>
+    </li>
+    <li class="swiper-slide">
+      <span class="avatar_box">
+        <img src="img/avatar_12.jpg" alt="avatar image" class="img_avatar">
+      </span>
+    </li>
+    </ul>
+  </div>
+  <button type="button" class="btn_random"><span>다른 아바타 보기</span></button>
+</div>
+</body>
+</html>
