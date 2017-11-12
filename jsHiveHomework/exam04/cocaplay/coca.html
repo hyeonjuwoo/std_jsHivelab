@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no,target-densitydpi=medium-dpi">
+<title>bear</title>
+<link rel="stylesheet" type="text/css" href="css/coca.css">
+<script src="https://code.jquery.com/jquery-latest.js"></script>
+</head>
+<body>
+<div class="evt_wrap">
+	<div class="evt_tit">
+		<div class="tit_area">
+			<h2 class="blind">1등 곰도 맞추고 100% 경품까지 폴라베어를 잡아라!</h2>
+		</div>
+	</div>
+
+	<div class="evt_ct">
+		<div class="evt_area">
+			<p class="blind">100% 당첨! 가장먼저 도착하는 폴라베어를 맞춰주세요</p>
+			<ul class="bxlst" id="clickLst">
+			<li class="rabx">
+				<input type="radio" name="beautybox" id="bx"/>
+				<label for="bx"><span class="blind">스키타는 베어</span></label>
+			</li>
+			<li class="rabx">
+				<input type="radio" name="beautybox" id="bx2"/>
+				<label for="bx2"><span class="blind">보드타는 베어</span></label>
+			</li>
+			<li class="rabx">
+				<input type="radio" name="beautybox" id="bx3"/>
+				<label for="bx3"><span class="blind">스케이트 베어</span></label>
+			</li>
+			</ul>
+			<a href="#" class="btn btn_app">choice</a>
+		</div>
+	</div>
+
+	<div class="evt_ct2">
+		<ul class="game_area sp" id="gameLst">
+		<li class="lane"><div class="sp gom"></div></li>
+		<li class="lane2"><div class="sp gom"></div></li>
+		<li class="lane3"><div class="sp gom"></div></li>
+		</ul>
+	</div>
+
+	<div style="height:2000px"></div>
+
+</div>
+<script>
+var exam = exam || {};
+exam.View = exam.View || {};
+
+exam.View.CocaPlay = function(htOptions) {
+	$.extend(this._htOptions, htOptions || {});
+	this.init();
+};
+
+exam.View.CocaPlay.prototype = {
+	bParticipate: false,
+	bChecked: false,
+	nCheckedIndex: 0,
+	nWinIndex: 0,
+	sMessage: '',
+	_htOptions: {
+		sOption: 'normal',
+	 	nWinNumber: 2,   // 당첨 "번호"(인덱스X)
+	},
+	init: function() {
+		this._assignElements();
+		this._attachEventHandlers();
+	},
+	_assignElements: function() {
+		this.welPlay = $('.evt_wrap');
+		this.welClickList = this.welPlay.find('#clickLst');
+		this.welClickItems = this.welClickList.find('input');
+		this.welGameList = this.welPlay.find('#gameLst');
+		this.welGameItems = this.welGameList.find('li');
+		this.welBtnChoice = this.welPlay.find('.btn_app');
+	},
+	_attachEventHandlers: function() {
+		this.welBtnChoice.on('click', $.proxy(this._onClickBtnChoice, this));
+	},
+	_onClickBtnChoice: function(e) {
+		e.preventDefault();
+		// 마음에 안드는데 어떻게 정리해야할지 모르겠당 또륵..
+		if (this.bParticipate) {
+			alert('이미 참여하셨습니다.')
+		} else {
+			this._alertChoice();
+			if (this.bChecked) {
+				this._scrollGameArea();
+				this._setWinIndex();
+				this._showResult();
+				this.bParticipate = true;
+			}
+		}
+	},
+	_alertChoice: function() {
+		for (var i = 0, max = this.welClickItems.length; i < max; i++) {
+			if (this.welClickItems[i].checked) {
+				this.bChecked = true;
+				this.nCheckedIndex = i;
+			}
+		}
+		if (!this.bChecked) {
+			alert("폴라베어를 선택해주세요.")
+		}
+	},
+	_scrollGameArea: function() {
+		$('html, body').animate({scrollTop:180})
+	},
+	_setWinIndex: function() {
+		// 희희 여기도 맘에 안든당 if가 너무 많당 보기힘들어..!
+		if (this._htOptions.sOption === 'win') {
+			this.nWinIndex = this.nCheckedIndex;
+			this.sMessage = '선택하신 폴라베어가 가장 먼저 도착했어요!'
+		} else if (this._htOptions.sOption === 'lose') {
+			if (this.nCheckedIndex+1 < this.welClickItems.length) {
+				this.nCheckedIndex+=1;
+			} else {
+				this.nCheckedIndex = 0;
+			}
+			this.nWinIndex = this.nCheckedIndex;
+			this.sMessage = '선택하신 폴라베어가 아쉽게 늦게 도착했어요!'
+		} else {
+			this.nWinIndex = this._htOptions.nWinNumber - 1;
+			if (this.nWinNumber === this.nCheckedIndex) {
+				this.sMessage = '선택하신 폴라베어가 가장 먼저 도착했어요!'
+			} else {
+				this.sMessage = '선택하신 폴라베어가 아쉽게 늦게 도착했어요!'
+			}
+		}
+	},
+	_showResult: function() {
+		var oSelf = this;
+		//this.welGameItems.eq(this.nCheckedIndex), $(this.welGameItems[this.nCheckedIndex]) ??
+		var welWinItem = this.welGameItems.eq(this.nWinIndex);
+			welBottleCap = welWinItem.find('.gom');
+		welWinItem.addClass('winlane');
+		welWinItem.siblings().find('.gom').animate({top:40});
+		welBottleCap.animate({top:98}, function() {
+		  alert(oSelf.sMessage);
+		});
+	}
+};
+
+$(document).ready(function() {
+	var Cocaplay1 = new exam.View.CocaPlay();  // 기본. 당첨번호 존재, 기본값 2
+	// var Cocaplay1 = new exam.View.CocaPlay({sOption: 'win'});  항상 우승
+	// var Cocaplay1 = new exam.View.CocaPlay({sOption: 'lose'});  항상 패배
+	// var Cocaplay1 = new exam.View.CocaPlay({nWinNumber: 3});  당첨 "번호"(인덱스X)
+});
+</script>
+</body>
+</html>
