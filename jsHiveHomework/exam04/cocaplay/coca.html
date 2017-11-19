@@ -87,13 +87,16 @@ exam.View.CocaPlay.prototype = {
 		if (this.bParticipate) {
 			alert('이미 참여하셨습니다.')
 		} else {
-			this._alertChoice();
-			if (this.bChecked) {
-				this._scrollGameArea();
-				this._setWinIndex();
-				this._showResult();
-				this.bParticipate = true;
-			}
+			this._playGame();
+		}
+	},
+	_playGame: function() {
+		this._alertChoice();
+		if (this.bChecked) {
+			this.bParticipate = true;
+			this._setWinIndex();
+			this._scrollGameArea();
+			this._showResult();
 		}
 	},
 	_alertChoice: function() {
@@ -135,12 +138,14 @@ exam.View.CocaPlay.prototype = {
 	_showResult: function() {
 		var oSelf = this;
 		//this.welGameItems.eq(this.nCheckedIndex), $(this.welGameItems[this.nCheckedIndex]) ??
-		var welWinItem = this.welGameItems.eq(this.nWinIndex);
+		var welWinItem = this.welGameItems.eq(this.nWinIndex),
 			welBottleCap = welWinItem.find('.gom');
-		welWinItem.addClass('winlane');
-		welWinItem.siblings().find('.gom').animate({top:40});
-		welBottleCap.animate({top:98}, function() {
-		  alert(oSelf.sMessage);
+		welWinItem.siblings().find('.gom').animate({top:40}, 600);
+		welBottleCap.animate({top:98}, 600, function() {
+			welWinItem.addClass('winlane');
+			setTimeout(function() {
+				alert(oSelf.sMessage);
+			}, 300)
 		});
 	}
 };
