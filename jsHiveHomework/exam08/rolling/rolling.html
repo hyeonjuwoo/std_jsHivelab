@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>Realtime</title>
+<style>
+/* Reset */
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,p,table,th,td,form,fieldset,legend,textarea,input,select,textarea,button,article,aside,dialog,footer,header,section,footer,nav,figure,main{margin:0;padding:0}
+article,aside,dialog,footer,header,section,footer,nav,figure,main{display:block}
+html,body{height:100%;-webkit-text-size-adjust:none;-ms-text-size-adjust:none}
+body,input,select,textarea,button{font-family:'Apple SD Gothic Neo', '돋움', Dotum, sans-serif; font-size:12px}
+fieldset,li,img{border:0;vertical-align:top}
+ul,ol{list-style:none}
+button{overflow:visible;border:0;background-color:transparent;cursor:pointer}
+button::-moz-focus-inner{padding:0;border:0}
+address,caption,em{font-style:normal}
+a,a:focus,a:active,a:hover{text-decoration:none}
+table{border-collapse:collapse;border-spacing:0}
+.blind,caption span,legend{overflow:hidden;position:absolute;top:0;left:0;width:1px;height:1px;font-size:1px;line-height:100px;white-space:nowrap}
+
+.section_nav{margin:20px 0;padding:20px 0;background:rgba(255,0,0,.1)}
+.nav_inner{position:relative;width:980px;margin:0 auto;background:rgba(255,0,0,.2)}
+.nav_inner .nav ul{padding:8px 0;}
+.nav_inner .nav ul:after{display:block;clear:both;content:''}
+.nav_inner .nav li{float:left;margin-right:4px}
+.nav_inner .nav li a{display:block;padding:4px 8px;background:rgba(255,0,0,.3)}
+
+.realtime{position:absolute;right:0;top:8px;border:1px solid;width:200px;height:20px;overflow:hidden;}
+.realtime ol{position:relative;width:200px;height:20px;padding-left:4px;font-size:17px;background:#fff;box-sizing:border-box}
+.realtime li{position:absolute;left:4px;right:0;height:20px;line-height:1.2em;}
+.realtime.pop{height:auto;overflow:visible;}
+.realtime.pop ol{height:auto}
+.realtime.pop li{position:static}
+.realtime.pop li.active{font-weight:bold}
+</style>
+</head>
+<body>
+    <div class="section_nav">
+        <div class="nav_inner">
+            <div class="nav">
+                <ul>
+                    <li><a href="#">메일</a></li>
+                    <li><a href="#">카페</a></li>
+                    <li><a href="#">블로그</a></li>
+                    <li><a href="#">쇼핑</a></li>
+                </ul>
+            </div>
+            <div id="realtime" class="realtime">
+                <ol>
+                    <li>1. 방탄소년단</li>
+                    <li>2. 인천공항 리무진버스</li>
+                    <li>3. 평창 롱패딩</li>
+                    <li>4. 귀순병사</li>
+                    <li>5. 슈주 롱패딩</li>
+                    <li>6. 역모</li>
+                    <li>7. 마동석</li>
+                    <li>8. 이번 생은 처음이라</li>
+                    <li>9. 영화순위</li>
+                    <li>10. 국세청홈택스</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-latest.js"></script>
+    <script>
+        var exam = exam || {};
+        exam.View = exam.View || {};
+
+        exam.View.Rolling = function(sTarget, htOptions) {
+            this.welRolling = $(sTarget);
+            $.extend(this._htOptions, htOptions || {});
+            this.init();
+        };
+
+        exam.View.Rolling.prototype = {
+            nCurrentIndex : 0,
+            oTimer : null,
+            _htOptions: {
+                nSpeed: 3000
+            },
+            init: function() {
+                this._assignElements();
+                this._initialize();
+                this._attachEventHandlers();
+                this._rollingPlay();
+            },
+            _assignElements: function() {
+                this.welList = this.welRolling.find('ol');
+                this.welItems = this.welList.find('li');
+            },
+            _initialize: function() {
+                this.nItemHeight = this.welItems.height();
+                this.nItemLength = this.welItems.length;
+                this.nSpeed = this._htOptions.nSpeed;
+
+                // 첫 번째 아이템을 제외한 나머지 리스트들 위치 이동
+                this.welItems.eq(this.nCurrentIndex).siblings().css('top', this.nItemHeight);
+            },
+            _attachEventHandlers: function() {
+                this.welList.on('mouseenter', $.proxy(this._onMouseoverList, this));
+                this.welList.on('mouseleave', $.proxy(this._onMouseoutList, this));
+            },
+            _onMouseoverList: function() {
+                this._rollingStop();
+                this.welRolling.addClass('pop');
+                this.welItems.eq(this.nCurrentIndex).addClass('active')
+            },
+            _onMouseoutList: function() {
+                this.welRolling.removeClass('pop');
+                this.welItems.eq(this.nCurrentIndex).removeClass('active')
+                this._rollingPlay();
+            },
+            _rollingPlay: function() {
+                var oSelf = this;
+                if(this.oTimer === null) {
+                    this.oTimer = setInterval(function() {
+                        var nNextIndex = (oSelf.nCurrentIndex < oSelf.nItemLength - 1)
+                            ? oSelf.nCurrentIndex + 1
+                            : 0;
+                        oSelf._showItem(nNextIndex);
+                    }, this.nSpeed);
+                }
+            },
+            _rollingStop: function() {
+                clearInterval(this.oTimer);
+                this.oTimer = null;
+            },
+            /*
+            * function
+            * @param nIdx 다음에 보여질 이미지 인덱스
+            */
+            _showItem: function(nIdx) {
+                this.welItems.eq(this.nCurrentIndex).animate({'top': -(this.nItemHeight)});
+                this.welItems.eq(nIdx).css('top', this.nItemHeight).animate({'top': 0});
+                this.nCurrentIndex = nIdx;
+            }
+        }
+        $(document).ready(function() {
+            var rolling = new exam.View.Rolling('#realtime', {nSpeed: 1500});
+        });
+    </script>
+</body>
+</html>
