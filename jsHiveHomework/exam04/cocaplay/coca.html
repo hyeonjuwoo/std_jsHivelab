@@ -59,8 +59,10 @@ exam.View.CocaPlay = function(htOptions) {
 exam.View.CocaPlay.prototype = {
 	bParticipate: false,
 	bChecked: false,
+	bIsPlaying: false,
 	nCheckedIndex: 0,
 	nWinIndex: 0,
+	nTryNumber: 3,
 	sMessage: '',
 	_htOptions: {
 		sOption: 'normal',
@@ -83,69 +85,93 @@ exam.View.CocaPlay.prototype = {
 	},
 	_onClickBtnChoice: function(e) {
 		e.preventDefault();
-		// 마음에 안드는데 어떻게 정리해야할지 모르겠당 또륵..
-		if (this.bParticipate) {
-			alert('이미 참여하셨습니다.')
+		if (!this.bIsPlaying) {
+			this.bIsPlaying = true;
+			// 참여여부 확인
+			if (this.bParticipate) {
+				this._checkTryNumber();
+			} else {
+				this._playGame();
+			}
+		}
+	},
+	_checkTryNumber: function() {
+		// 도전 횟수 체크
+		if (this.nTryNumber > 0) {
+			if (window.confirm('이미 참여하셨습니다. 재도전 하시겠습니까?\n남은 도전 횟수 : ' + this.nTryNumber + '회\n하루에 3회 참여 가능합니다.')) {
+				this._resetGame();
+			}
 		} else {
-			this._playGame();
+			alert('오늘 도전기회를 모두 소진하였습니다. 내일 다시 도전해주세요!');
+			this.bIsPlaying = false;
 		}
 	},
 	_playGame: function() {
-		this._alertChoice();
-		if (this.bChecked) {
+		this._getSelectIndex();
+		if (this.nCheckedIndex !== -1) {
 			this.bParticipate = true;
+			this.nTryNumber -= 1
 			this._setWinIndex();
-			this._scrollGameArea();
 			this._showResult();
 		}
 	},
-	_alertChoice: function() {
-		for (var i = 0, max = this.welClickItems.length; i < max; i++) {
-			if (this.welClickItems[i].checked) {
-				this.bChecked = true;
-				this.nCheckedIndex = i;
-			}
-		}
-		if (!this.bChecked) {
-			alert("폴라베어를 선택해주세요.")
-		}
+	_resetGame: function() {
+		var oSelf = this;
+		// 게임 초기화
+		this.bParticipate = false;
+		$('html, body').animate({scrollTop:0});
+		this.welClickItems.prop("checked", false);
+		this.welGameItems.removeClass('winlane').find('.gom').animate({top:0}, 600, function() {
+			oSelf.bIsPlaying = false;
+		});
 	},
-	_scrollGameArea: function() {
-		$('html, body').animate({scrollTop:180})
+	_getSelectIndex: function() {
+		// 사용자가 체크한 인덱스 가져오기 + 오류시 얼럿 기능
+		this.nCheckedIndex = this.welClickItems.filter(':checked').parent().index();
+		if (this.nCheckedIndex === -1) {
+			alert("폴라베어를 선택해주세요.");
+			this.bIsPlaying = false;
+		}
 	},
 	_setWinIndex: function() {
-		// 희희 여기도 맘에 안든당 if가 너무 많당 보기힘들어..!
-		if (this._htOptions.sOption === 'win') {
-			this.nWinIndex = this.nCheckedIndex;
-			this.sMessage = '선택하신 폴라베어가 가장 먼저 도착했어요!'
-		} else if (this._htOptions.sOption === 'lose') {
-			if (this.nCheckedIndex+1 < this.welClickItems.length) {
-				this.nCheckedIndex+=1;
-			} else {
-				this.nCheckedIndex = 0;
-			}
-			this.nWinIndex = this.nCheckedIndex;
-			this.sMessage = '선택하신 폴라베어가 아쉽게 늦게 도착했어요!'
-		} else {
-			this.nWinIndex = (this._htOptions.nWinNumber) - 1;
-			if (this.nWinIndex === this.nCheckedIndex) {
+		// 게임 결과 결정
+		switch (this._htOptions.sOption) {
+			case 'win':
+				this.nWinIndex = this.nCheckedIndex;
 				this.sMessage = '선택하신 폴라베어가 가장 먼저 도착했어요!'
-			} else {
+				break;
+			case 'lose':
+				if (this.nCheckedIndex+1 < this.welClickItems.length) {
+					this.nCheckedIndex+=1;
+				} else {
+					this.nCheckedIndex = 0;
+				}
+				this.nWinIndex = this.nCheckedIndex;
 				this.sMessage = '선택하신 폴라베어가 아쉽게 늦게 도착했어요!'
-			}
+				break;
+			default:
+				this.nWinIndex = (this._htOptions.nWinNumber) - 1;
+				if (this.nWinIndex === this.nCheckedIndex) {
+					this.sMessage = '선택하신 폴라베어가 가장 먼저 도착했어요!'
+				} else {
+					this.sMessage = '선택하신 폴라베어가 아쉽게 늦게 도착했어요!'
+				}
 		}
 	},
 	_showResult: function() {
-		var oSelf = this;
-		//this.welGameItems.eq(this.nCheckedIndex), $(this.welGameItems[this.nCheckedIndex]) ??
-		var welWinItem = this.welGameItems.eq(this.nWinIndex),
+		var oSelf = this,
+			welWinItem = this.welGameItems.eq(this.nWinIndex),
 			welBottleCap = welWinItem.find('.gom');
-		welWinItem.siblings().find('.gom').animate({top:40}, 600);
-		welBottleCap.animate({top:98}, 600, function() {
-			welWinItem.addClass('winlane');
-			setTimeout(function() {
-				alert(oSelf.sMessage);
-			}, 300)
+		// 게임 결과 보여주기
+		$('html, body').animate({scrollTop:180}).promise().done(function() {
+			welWinItem.siblings().find('.gom').animate({top:40}, 600);
+			welBottleCap.animate({top:98}, 600, function() {
+				welWinItem.addClass('winlane');
+				setTimeout(function() {
+					alert(oSelf.sMessage);
+					oSelf.bIsPlaying = false;
+				}, 300)
+			});
 		});
 	}
 };
