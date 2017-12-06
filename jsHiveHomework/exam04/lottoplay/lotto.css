@@ -1,0 +1,20 @@
+@charset "utf-8";
+*{margin:0;padding:0}
+body{font-size:14px;line-height:1.5;color:#555}
+h1,h2,h3,h4,h5,h6{text-align:left}
+ul,li{list-style:none}
+button,label{cursor:pointer}
+button::-moz-focus-inner{padding:0;border:0}
+hr{display:none}
+#wrapper{padding:0 10px}
+.lotto_wrap{position:relative;width:100%;max-width:750px;margin:0 auto}
+.lotto_wrap .lotto{margin:50px 0}
+.lotto_wrap .lotto .num_box{min-height:30px;margin:10px 0}
+.lotto_wrap .lotto .num{display:inline-block;margin:0 5px;width:30px;height:30px;margin:0px 5px;border-radius:50%;font-weight:bold;text-align:center;vertical-align:middle;color:#fff}
+.lotto_wrap .lotto .num:before{display:inline-block;height:100%;vertical-align:middle;content:''}
+.lotto_wrap .lotto .num.n0{background:#fcc43d}
+.lotto_wrap .lotto .num.n10{background:#8cc6e7}
+.lotto_wrap .lotto .num.n20{background:#f18d80}
+.lotto_wrap .lotto .num.n30{background:#a7a2de}
+.lotto_wrap .lotto .num.n40{background:#6bce9e}
+.lotto_wrap .lotto button{padding:10px;border:2px solid #555;background:#fff;line-height:1.3;vertical-align:middle}

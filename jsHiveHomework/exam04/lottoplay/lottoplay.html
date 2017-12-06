@@ -1,0 +1,173 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
+<title>exam</title>
+<link rel="stylesheet" href="lotto.css" />
+<script src="https://code.jquery.com/jquery-latest.js"></script>
+</head>
+<body>
+<!-- wrapper [s] -->
+<div id="wrapper">
+	<!-- header [s] -->
+	<div id="header">
+	</div>
+	<!-- header [e] -->
+	<hr />
+	<!-- container [s] -->
+	<div id="container">
+		<div class="lotto_wrap">
+			<h1>로또 번호 자동 생성</h1>
+			<div class="lotto type1">
+				<h2>한번에 6개의 숫자 뽑기</h2>
+				<div class="num_box"></div>
+				<button type="button">번호 생성</button>
+			</div>
+			<div class="lotto type2">
+				<h2>1개씩 뽑기</h2>
+				<div class="num_box"></div>
+				<button type="button">번호 생성</button>
+			</div>
+		</div>
+	</div>
+	<!-- container [e] -->
+	<hr />
+	<!-- footer [s] -->
+	<div id="footer">
+	</div>
+	<!-- footer [e] -->
+</div>
+<!-- wrapper [e] -->
+<script>
+var exam = exam || {};
+exam.View = exam.View || {};
+
+exam.View.LottoPlay = function() {
+	this.init();
+};
+
+exam.View.LottoPlay.prototype = {
+	aDefault: [],       // 기본 1 ~ 45 숫자가 담긴 배열
+	aDefault2: [],      // Type2에 쓰일 랜덤숫자 빼고 남은 배열
+	aNum1: [],          // Type1에서 뽑아낸 랜덤숫자 6개가 담길 배열
+	aNum2: [],          // Type2에서 뽑아낸 랜덤숫자 1개가 담길 배열
+	init: function() {
+		this._assignElements();
+		this._initialize();
+		this._attachEventHandlers();
+	},
+	_assignElements: function() {
+		this.welLotto = $('.lotto_wrap');
+		this.welView1 = this.welLotto.find('.type1 .num_box');
+		this.welView2 = this.welLotto.find('.type2 .num_box');
+		this.welBtn1 = this.welLotto.find('.type1 button');
+		this.welBtn2 = this.welLotto.find('.type2 button');
+	},
+	_initialize: function() {
+		this._createDefaultArray();
+	},
+	_attachEventHandlers: function() {
+		this.welBtn1.on('click', $.proxy(this._onClickBtn1, this));
+		this.welBtn2.on('click', $.proxy(this._onClickBtn2, this));
+	},
+	_onClickBtn1: function() {
+		this._createNumber1();
+		this._showItem1();
+	},
+	_onClickBtn2: function() {
+		this._createNumber2();
+		this._showItem2();
+	},
+	_createDefaultArray: function () {
+		for (var i = 1; i <= 45; i++) {
+			this.aDefault.push(i);
+		}
+		this.aDefault2 = this.aDefault.concat();
+	},
+	_createRandomNum: function () {
+		return Math.floor( Math.random() * (this.aDefault.length));
+	},
+	_compareNum: function (value1, value2) {
+		return value1 - value2;
+	},
+	_createNumber1: function () {
+		var aDefault1 = this.aDefault.concat(),
+			nDefault1Length = 0,
+			nRandom = 0,
+			aRandom = [];
+
+		this.aNum1 = [];
+
+		for (var i = 0; i < 6; i++) {
+			nDefault1Length = aDefault1.length;
+			nRandom = Math.floor( Math.random() * (nDefault1Length) );
+			aRandom = aDefault1.splice(nRandom, 1);
+			this.aNum1 = this.aNum1.concat(aRandom);
+		}
+		this.aNum1.sort(this._compareNum)
+	},
+	_createNumber2: function () {
+		var nDefault2Length = 0,
+			nRandom = 0;
+
+		if (this.aDefault2.length === 39) {
+			this.aDefault2 = [];
+			this.aDefault2 = this.aDefault.concat();
+		}
+
+		nDefault2Length = this.aDefault2.length;
+		nRandom = Math.floor( Math.random() * (nDefault2Length) );
+		this.aNum2 = this.aDefault2.splice(nRandom, 1);
+	},
+	_showItem1: function () {
+		var colorNum = 0
+			sResult = '';
+		for (var i = 0; i < this.aNum1.length; i++) {
+			if (0 < this.aNum1[i] && this.aNum1[i] < 10) {
+				colorNum = 0
+			} else if (10 <= this.aNum1[i] && this.aNum1[i] < 20) {
+				colorNum = 10
+			} else if (20 <= this.aNum1[i] && this.aNum1[i] < 30) {
+				colorNum = 20
+			} else if (30 <= this.aNum1[i] && this.aNum1[i] < 40) {
+				colorNum = 30
+			} else {
+				colorNum = 40
+			}
+			sResult += '<span class="num n' + colorNum +'"><span>' + this.aNum1[i] + '</span></span>';
+		}
+		this.welView1.html(sResult);
+	},
+	_showItem2: function () {
+		var colorNum = 0
+			sResult = '';
+
+		if (this.welView2.find('.num').length === 6) {
+			this.welView2.html(sResult);
+		}
+
+		if (0 < this.aNum2[0] && this.aNum2[0] < 10) {
+			colorNum = 0
+		} else if (10 <= this.aNum2[0] && this.aNum2[0] < 20) {
+			colorNum = 10
+		} else if (20 <= this.aNum2[0] && this.aNum2[0] < 30) {
+			colorNum = 20
+		} else if (30 <= this.aNum2[0] && this.aNum2[0] < 40) {
+			colorNum = 30
+		} else {
+			colorNum = 40
+		}
+
+		sResult = '<span class="num n' + colorNum +'"><span>' + this.aNum2[0] + '</span></span>';
+		this.welView2.append(sResult);
+	}
+};
+
+$(document).ready(function() {
+	var Lottoplay = new exam.View.LottoPlay();
+});
+</script>
+</body>
+</html>
